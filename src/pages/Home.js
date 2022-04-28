@@ -1,11 +1,13 @@
 import React from "react";
 import Slider from "../components/Slider";
+import Newsletter from "../components/Newsletter";
 
 const Home = ({ user }) => {
   if (!user) {
     return (
       <div>
         <Slider />
+        <Newsletter />
       </div>
     );
   }
@@ -13,6 +15,7 @@ const Home = ({ user }) => {
     <div>
       <p>Welcome back, {user.email}!</p>
       <Slider />
+      <Newsletter />
     </div>
   );
 };

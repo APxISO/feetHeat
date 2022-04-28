@@ -891,6 +891,24 @@ margin-top: 15px;
   transform: scale(1.1);
 }
 
+.adminUsersCard {
+  display: flex;
+  flex-direction: column;
+  color: white; 
+  border: 1px solid white;
+}
+
+.adminUsersCard h5 {
+  font-size: 10px;
+  font-weight: 300;
+  display: flex;
+  justify-content: center;
+  color: white;
+  margin-bottom: 5px;
+  
+}
+
+
 /* BELOW IS LEGACY STYLING THAT WILL BE REMOVED ONCE ALL FUNCTIONALITY IS BUILT INTO UPDATED STYLING */
 
 /* #card {
