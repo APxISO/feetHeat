@@ -106,7 +106,7 @@ async function createInitialProducts() {
   try {
     const productsToAdd = [
       {
-        title: "NIKE AIR JORDAN 4 RETRO",
+        title: "Air Jordan 1 Retro High OG 'Shadow'",
         description:
           "The Air Jordan IV was MJ's first signature model to take flight. Complete with never before seen “Wings” acting as lace locks and an unforgettable color scheme, the silhouette now returns in its truest form. Nodding to its 1989 debut, the new Air Jordan IV features iconic Nike Air branding on both the heel and outsole.",
         imgurl:
@@ -115,27 +115,27 @@ async function createInitialProducts() {
         price: 250,
       },
       {
-        title: "PUMA SUEDE CLASSIC XXI",
+        title: "Air Jordan 11 Retro Gym Red",
         description:
-          "The Suede hit the scene in 1968 and has been changing the game ever since. It's been worn by the icons of every generation and it's",
+          "For Chicago Bulls Fans, the historical significance of the Air Jordan 11 Retro ‘Win Like 96’ will be abundantly clear. 1996 is the year that the Bulls capped off the regular season with a record-breaking 72 wins, on their way to a fourth NBA title in six seasons. Michael wore the Jordan 11 during that magical run, and this December 2017 release, dressed in a dazzling shade of red, honors the ’96 squad that couldn’t lose.",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/008/870/353/original/235806_00.png.png",
         stock: 100,
         price: 75,
       },
       {
-        title: "VANS SK8-HI",
+        title: "The Air Jordan 11 Retro Legend Blue",
         description:
-          "The Sk8-Hi was introduced in 1978 as Style 38, and showcased the now-iconic Vans Sidestripe on a new, innovative high top silhouette. As only the second model featuring the recognizable marker formerly known as the “jazz stripe,” the Sk8-Hi brought a whole new look to the Vans family.  Honoring that first legendary high top, the Sk8-Hi is made with sturdy suede and canvas uppers in a variety of classic and unexpected colorways. This lace-up shoe also includes re-enforced toe caps, supportive padded collars, and signature rubber waffle outsoles.",
+          "The Air Jordan 11 Retro ‘Legend Blue’ 2014 was based on the 1996 Jordan 11 ‘Columbia’ first worn by Jordan during the 1996 NBA All-Star Game. Inspired by the classic colorway Jordan wore as a Tarheel, the ‘Columbia’ first retroed in 2001 for the Jordan 11 ‘Columbia’ Retro release.",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/010/223/048/original/13607_00.png.png",
         stock: 150,
         price: 80,
       },
       {
-        title: "TIMBERLAND® PREMIUM 6-INCH WATERPROOF BOOTS",
+        title: "Air Jordan 1 Retro OG Panda",
         description:
-          "Inspired by our original waterproof boot, this all-season style gives you tireless waterproof performance and instantly recognizable work-boot styling. Other essential features include 400 grams of warm, down-free PrimaLoft® insulation, a padded collar for a comfortable fit around the ankle, a rubber lug outsole for traction, and materials sourced with respect for the planet.",
+          "Arriving in stores in February 2018, the Air Jordan 1 Retro High OG ‘Panda’ is a new spin on a classic design. The Chicago Bulls-inspired colorway combines elements of the ‘Bred’ and ‘Black Toe’ editions of the Air Jordan 1, executed on a premium leather build. The high-top features a black Swoosh on the white quarter panel, along with contrasting pops of red on the toe box, heel, collar, and outsole. The shoe stays true to its OG 1985 roots with Nike Air branding on the tongue tag and sockliner",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/021/545/481/original/509480_00.png.png",
         stock: 55,
