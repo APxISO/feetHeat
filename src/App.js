@@ -12,7 +12,7 @@ import Announcement from "./components/Announcement";
 import Footer from "./components/Footer";
 import AllProducts from "./components/AllProducts";
 import Home from "./pages/Home";
-import ProductSingleView from "./ProductSingleView";
+import ProductSingleView from "./productSingleView";
 
 const App = () => {
   const [products, setProducts] = useState([]);
@@ -51,7 +51,7 @@ const App = () => {
 
   const addItemToCart = async (currentProduct) => {
     //IF A USER IS LOGGED IN
-    console.log(user, "HERE");
+    console.log(user, "Item added!");
     if (user) {
       for (let i = 0; i < user.cart.products.length; i++) {
         if (user.cart.products.length) {

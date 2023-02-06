@@ -7,13 +7,6 @@ const Navbar = ({ user, setToken, setUser, token }) => {
   return (
     <div className="navbar">
       <div className="navcont">
-        <div className="navleft">
-          EN
-          <div className="searchcont">
-            <input placeholder="Search"></input>
-            <SearchOutlined />
-          </div>
-        </div>
         <Link to="/" className="navcenter">
           <img src={logo} alt="Feet Heat Logo" />
         </Link>

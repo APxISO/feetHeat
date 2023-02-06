@@ -16,6 +16,7 @@ const AllProducts = ({ products }) => {
       <div className="popProductsCont">
         {products.map((item) => (
           <div className="singleProductCont" key={item.id}>
+            <h3>{item.title}</h3>
             <div className="circle" />
             <img src={item.imgurl} />
             <Link to={`./${item.id}`}>

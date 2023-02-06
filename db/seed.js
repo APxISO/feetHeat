@@ -1,6 +1,11 @@
 require("dotenv").config();
 const client = require("./");
-const { createUser, getUser, getUserById, getUserByEmail } = require("./users");
+const {
+  createUser,
+  getUser,
+  getUserById,
+  getUserByUsername,
+} = require("./users");
 const { createProduct, getProducts, getProductById } = require("./products");
 const {
   getAllCategories,
@@ -35,11 +40,12 @@ const dropTables = async () => {
 
 const createTables = async () => {
   console.log("Starting to create tables");
-  await client.query(`
+  try {
+    await client.query(`
 
     CREATE TABLE users(
       id SERIAL PRIMARY KEY,
-      email VARCHAR(255) UNIQUE NOT NULL,
+      username VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
       "isAdmin" boolean DEFAULT false
     );
@@ -79,18 +85,20 @@ const createTables = async () => {
       quantity INTEGER NOT NULL
     );
   `);
-
-  console.log("Tables created...");
+    console.log("Tables created...");
+  } catch (error) {
+    console.error("Error creating tables:", error);
+  }
 };
 
 async function createInitialUsers() {
   console.log("Starting to create users...");
   try {
     const usersToCreate = [
-      { email: "admin@gmail.com", password: "admin1234", isAdmin: true },
-      { email: "albert@gmail.com", password: "bertie99" },
-      { email: "sandra@gmail.com", password: "sandra123" },
-      { email: "glamgal@hotmail.com", password: "glamgal123" },
+      { username: "admin@gmail.com", password: "admin1234", isAdmin: true },
+      { username: "albert@gmail.com", password: "bertie99" },
+      { username: "sandra@gmail.com", password: "sandra123" },
+      { username: "glamgal@hotmail.com", password: "glamgal123" },
     ];
     const users = await Promise.all(usersToCreate.map(createUser));
 
@@ -121,7 +129,7 @@ async function createInitialProducts() {
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/008/870/353/original/235806_00.png.png",
         stock: 100,
-        price: 75,
+        price: 175,
       },
       {
         title: "The Air Jordan 11 Retro Legend Blue",
@@ -130,7 +138,7 @@ async function createInitialProducts() {
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/010/223/048/original/13607_00.png.png",
         stock: 150,
-        price: 80,
+        price: 180,
       },
       {
         title: "Air Jordan 1 Retro OG Panda",
@@ -166,30 +174,30 @@ async function createInitialProducts() {
         imgurl:
           "https://image.goat.com/375/attachments/product_template_pictures/images/014/979/033/original/105568_00.png.png",
         stock: 47,
-        price: 135,
+        price: 235,
       },
       {
-        title: "CONVERSE CHUCK TAYLOR ALLSTARS HI",
+        title: "Air Jordan 4 Retro OG 'Bred' 2019",
         description:
-          "You need a style to rely on. The Chuck Taylor All-Star is a staple: the high-top and low-top silhouettes stay simply classic, while the white laces and star ankle patch give a nod to the legacy of the Chuck. This is the go-with-everything go-to that you won’t get sick of going to. Stock up.",
+          "The 2019 edition of the Air Jordan 4 Bred celebrates the 30th anniversary of the classic silhouette, appearing in the same colorway that Michael Jordan wore when he sank 'The Shot' during the first round of the 1989 NBA playoffs. It’s rendered in a build that’s faithful to the original, complete with a black nubuck upper, visible Air Sole cushioning underfoot and Nike Air branding on the heel.",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/020/806/485/original/461782_00.png.png",
         stock: 150,
-        price: 75,
+        price: 275,
       },
       {
-        title: "SPEEDO SURF KNIT PRO",
+        title: "Wmns Air Jordan 12 Retro 'Reptile'",
         description:
-          "Step into the water sporting the aquatic Speedo® Surf Knit Pro slip-on water shoes.Surf Knit upper engineered for ultimate support and breathability.Pull tabs in front and back allows easy on and off.Hydrophobic rubber EVA insole. STRAC outsole is designed to disperse water and provide improved performance and traction.",
+          "The Wmns Air Jordan 12 Retro 'Reptile' sneaker draws details from the 1996 classic and elevates them with luxe style additions. This April 2019-released, women's-exclusive shoe features the AJ12s original stitching, inspired by the Rising Sun Flag of Japan. Its black leather upper is laden with exotic reptile-inspired texture and embellished with gold accents. This edition is completed with classic Zoom cushioning and sections of herringbone tread.",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/021/042/384/original/500924_00.png.png",
         stock: 25,
-        price: 75,
+        price: 275,
       },
       {
-        title: "REEBOK NANO X2 TRAINING SHOES",
+        title: "Trophy Room x Air Jordan 5 Retro 'Ice Blue'",
         description:
-          "From pistol squats to burpees, there's no shortage of moves to take your workout to the next level. Reach for these men's Reebok shoes to stay confident in or out of the gym. They have a Flexweave® woven upper that's breathable and durable, with integrated support for stable movement in every direction. The rubber outsole with a strategic lug pattern gives you secure traction.",
+          "The Trophy Room x Air Jordan 5 Retro sneaker draws inspiration from the real-life trophy room in the Jordan family home. This 'Ice Blue' rendition is replete with a rich suede upper, hits of University Red, Sail and a metallic gold lace lock. Each lateral heel is embroidered with metallic gold numerals—'23' and '5'—the jersey numbers worn by MJ and his son, Marcus. Below, the sneaker's translucent rubber sole displays a wood-grain motif to reference the court-style flooring in MJ's trophy room. A total of 7,000 pairs were released in May 2019, each individually numbered.",
         imgurl:
           "https://image.goat.com/750/attachments/product_template_pictures/images/021/474/777/original/TR_JSP_5_ICE.png.png",
         stock: 47,
@@ -276,10 +284,10 @@ async function createInitialProducts() {
         imgurl:
           "https://image.goat.com/375/attachments/product_template_pictures/images/009/249/006/original/259509_00.png.png",
         stock: 23,
-        price: 550,
+        price: 245,
       },
       {
-        title: "RFEAR OF GOD AIR RAID",
+        title: "FEAR OF GOD AIR RAID",
         description:
           "Nike and frequent collaborator Fear Of God designer, Jerry Lorenzo, joined forces once again for the Air Fear Of God Raid &#39;Black&#39; sneaker. Released in May 2019, the uniquely designed silhouette is inspired by one of Lorenzo’s favorite Nike designs, the Air Raid. Outfitted with a cross strap suede and textile upper above; below, its equipped with a double stacked Zoom Air unit in heel for a retro, yet futuristic finish.",
         imgurl:

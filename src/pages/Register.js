@@ -1,46 +1,52 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
-const Register = ({
-  email,
-  setEmail,
-  password,
-  setPassword,
-  confirm,
-  setConfirm,
-  token,
-  setToken,
-  error,
-  setError,
-}) => {
-  const history = useNavigate();
+const Register = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [token, setToken] = useState("");
+  const [error, setError] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log(password);
+    setError("");
 
     if (password !== confirm) {
       setError("Confirm password does not match original password");
       return;
     }
 
-    const response = await fetch(`http://localhost:3001/api/user/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    try {
+      const response = await fetch(`http://localhost:3001/api/user/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
 
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    const info = await response.json();
-    console.log(info);
-    if (info.error) {
-      setError(info.error.message);
-    } else {
-      setToken(info.token);
-      localStorage.setItem("token", info.token);
-      history("/");
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      const data = await response.json();
+
+      console.log(data);
+      setToken(data.data.token);
+
+      if (token) {
+        localStorage.setItem("token", token);
+        setIsLoggedIn(true);
+        alert(data.data.message);
+        navigate("/Products");
+      }
+
+      setUsername("");
+      setPassword("");
+      setConfirm("");
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -51,10 +57,10 @@ const Register = ({
         <form onSubmit={(e) => handleRegister(e)}>
           <input
             required
-            minLength=""
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email"
+            minLength="5"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="username"
           />
           <input
             required
@@ -75,7 +81,14 @@ const Register = ({
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </div>
-          <button>LOGIN</button>
+
+          <button>REGISTER</button>
+          {/* <div className="login_button">
+            <h3>Already have an account?</h3>
+            <Link to="/Login">
+              <button>Click here to Login!</button>
+            </Link>
+          </div> */}
         </form>
         <p>{error}</p>
       </div>

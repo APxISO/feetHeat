@@ -17,19 +17,29 @@ app.use(cors());
 
 app.use(async (req, res, next) => {
   try {
-    if (!req.headers.authorization) {
+    if (
+      !req.headers.authorization ||
+      !req.headers.authorization.split(" ")[1]
+    ) {
       return next();
     }
-    const auth = req.headers.authorization.split(" ")[1];
-    const _user = await JWT.decode(auth, process.env.JWT_SECRET);
-    if (!_user) {
-      return next();
+    try {
+      const auth = req.headers.authorization.split(" ")[1];
+      const _user = await JWT.decode(auth, process.env.JWT_SECRET);
+      if (!_user) {
+        return next();
+      }
+      const user = await getUserById(_user.id);
+      req.user = user;
+      req.user.cart = await getCartByUserId(user.id);
+      req.user.cart.products = await getAllProductsByOrderId(req.user.cart.id);
+      next();
+    } catch (error) {
+      if (error.name === "JsonWebTokenError") {
+        return res.status(401).send({ error: "Invalid Token" });
+      }
+      next(error);
     }
-    const user = await getUserById(_user.id);
-    req.user = user;
-    req.user.cart = await getCartByUserId(user.id);
-    req.user.cart.products = await getAllProductsByOrderId(req.user.cart.id);
-    next();
   } catch (error) {
     next(error);
   }

@@ -1,23 +1,27 @@
 const bcrypt = require("bcrypt");
 const client = require("./index");
 
-const createUser = async ({ email, password, isAdmin = false }) => {
+const createUser = async ({ username, password, isAdmin = false }) => {
   try {
     const hashPassword = await bcrypt.hash(password, 10);
 
     const response = await client.query(
       `
-        INSERT INTO users (email, password, "isAdmin") VALUES ($1, $2, $3)
+        INSERT INTO users (username, password, "isAdmin") VALUES ($1, $2, $3)
         RETURNING *;
         `,
-      [email, hashPassword, isAdmin]
+      [username, hashPassword, isAdmin]
     );
 
     delete response.rows[0].password;
 
     return response.rows[0];
   } catch (err) {
-    throw { name: "signupError", message: "User already exists" };
+    if (err.code === "23505") {
+      throw { name: "signupError", message: "User already exists" };
+    } else {
+      throw err;
+    }
   }
 };
 
@@ -27,7 +31,7 @@ const getUserById = async (userId) => {
       rows: [user],
     } = await client.query(
       `
-        SELECT id, email, "isAdmin"
+        SELECT id, username, "isAdmin"
         FROM users
         WHERE id = $1
       `,
@@ -39,14 +43,14 @@ const getUserById = async (userId) => {
   }
 };
 
-const getUser = async ({ email, password }) => {
+const getUser = async ({ username, password }) => {
   try {
     const user = await client.query(
       `
         SELECT * FROM users
-        WHERE email = $1;
+        WHERE username = $1;
     `,
-      [email]
+      [username]
     );
     if (!user.rows.length) {
       return { name: "noUser", message: "User does not exists" };
@@ -65,10 +69,10 @@ const getUser = async ({ email, password }) => {
   }
 };
 
-const getUserByEmail = async (email) => {
+const getUserByUsername = async (username) => {
   try {
-    const user = await client.query(`SELECT * FROM users WHERE email = $1`, [
-      email,
+    const user = await client.query(`SELECT * FROM users WHERE username = $1`, [
+      username,
     ]);
 
     return user.rows[0];
@@ -79,7 +83,7 @@ const getUserByEmail = async (email) => {
 
 const getallUsers = async () => {
   try {
-    const user = await client.query(`SELECT id,email FROM users;`);
+    const user = await client.query(`SELECT id,username FROM users;`);
 
     return user.rows;
   } catch (error) {
@@ -91,6 +95,6 @@ module.exports = {
   createUser,
   getUser,
   getUserById,
-  getUserByEmail,
+  getUserByUsername,
   getallUsers,
 };
