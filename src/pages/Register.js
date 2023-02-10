@@ -21,7 +21,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/user/register`, {
+      const response = await fetch(`http://localhost:3000/api/user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
 
@@ -30,9 +30,14 @@ const Register = () => {
           password,
         }),
       });
-      const data = await response.json();
 
-      console.log(data);
+      if (!response.ok) {
+        const error = await response.text();
+        setError(error);
+        return;
+      }
+
+      const data = await response.json();
       setToken(data.data.token);
 
       if (token) {
@@ -47,6 +52,7 @@ const Register = () => {
       setConfirm("");
     } catch (error) {
       console.error(error);
+      setError("An unexpected error occurred");
     }
   };
 
@@ -83,12 +89,6 @@ const Register = () => {
           </div>
 
           <button>REGISTER</button>
-          {/* <div className="login_button">
-            <h3>Already have an account?</h3>
-            <Link to="/Login">
-              <button>Click here to Login!</button>
-            </Link>
-          </div> */}
         </form>
         <p>{error}</p>
       </div>
