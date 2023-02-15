@@ -5,8 +5,8 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [token, setToken] = useState("");
   const [error, setError] = useState("");
+  const [token, setToken] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const navigate = useNavigate();
@@ -21,10 +21,9 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/user/register`, {
+      const response = await fetch(`/api/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-
         body: JSON.stringify({
           username,
           password,
@@ -37,15 +36,20 @@ const Register = () => {
         return;
       }
 
-      const data = await response.json();
-      setToken(data.data.token);
+      const { token } = await response.json();
 
-      if (token) {
-        localStorage.setItem("token", token);
-        setIsLoggedIn(true);
-        alert(data.data.message);
-        navigate("/Products");
+      if (!token) {
+        console.error("Invalid response format:", { token });
+        setError("An unexpected error occurred");
+        return;
       }
+
+      setToken(token);
+
+      localStorage.setItem("token", token);
+      setIsLoggedIn(true);
+      alert("Registration successful!");
+      navigate("/Products");
 
       setUsername("");
       setPassword("");
@@ -60,7 +64,7 @@ const Register = () => {
     <div className="registerCont">
       <div className="registerCard">
         <h2>CREATE AN ACCOUNT</h2>
-        <form onSubmit={(e) => handleRegister(e)}>
+        <form onSubmit={handleRegister}>
           <input
             required
             minLength="5"
@@ -79,6 +83,7 @@ const Register = () => {
           <input
             required
             type="password"
+            minLength="8"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="confirm password"
@@ -90,7 +95,7 @@ const Register = () => {
 
           <button>REGISTER</button>
         </form>
-        <p>{error}</p>
+        {error && <p>{error}</p>}
       </div>
     </div>
   );

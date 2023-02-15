@@ -1,48 +1,49 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({
-  email,
-  setEmail,
-  password,
-  setPassword,
-  confirm,
-  setConfirm,
-  error,
-  setError,
-  user,
-  setUser,
-  setToken,
-}) => {
-  const history = useNavigate();
+const Login = ({ setToken }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/api/user/login", {
+      const response = await fetch(`/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          username,
           password,
         }),
       });
 
       const data = await response.json();
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        setToken(data.token);
-        console.log("Logged in");
-        history("/");
-      }
       if (data.error) {
-        setError(data.message);
+        setError(data.error.message);
+        return;
       }
+
+      const { token } = data;
+
+      if (!token) {
+        console.error("Invalid response format:", { token });
+        setError("An unexpected error occurred");
+        return;
+      }
+
+      alert("Welcome back " + `${username}` + "!");
+      navigate("/Products");
+
+      setUsername("");
+      setPassword("");
     } catch (error) {
       console.error(error);
+      setError("Error logging in. Please try again.");
     }
   };
 
@@ -53,9 +54,9 @@ const Login = ({
         <form onSubmit={handleLogin}>
           <input
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="username"
           />
           <input
             required
@@ -69,6 +70,7 @@ const Login = ({
             <Link to="/Register">REGISTER NEW ACCOUNT</Link>
           </div>
         </form>
+        {error && <p>{error}</p>}
       </div>
     </div>
   );
