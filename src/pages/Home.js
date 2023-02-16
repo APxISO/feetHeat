@@ -13,7 +13,7 @@ const Home = ({ user }) => {
   }
   return (
     <div>
-      <p>Welcome back, {user.email}!</p>
+      <p>Welcome back, {user.username}!</p>
       <Slider />
       <Newsletter />
     </div>

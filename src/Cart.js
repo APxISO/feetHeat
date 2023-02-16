@@ -1,6 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Cart = ({
@@ -13,36 +11,33 @@ const Cart = ({
 }) => {
   const [userTotal, setUserTotal] = useState(0);
   const [total, setTotal] = useState(0);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const visitorCheckout = () => {
-    history("/PurchaseSuccessful");
+    navigate("/PurchaseSuccessful");
   };
 
   const handleCheckOut = async (orderId, creatorId) => {
-    const response = await fetch(
-      "http://localhost:3001/api/order/checkoutOrder",
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          orderId,
-          creatorId,
-        }),
-      }
-    );
+    const response = await fetch(`/api/order/checkoutOrder`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        orderId,
+        creatorId,
+      }),
+    });
     const data = await response.json();
     console.log(data);
     fetchUser();
-    history("/PurchaseSuccessful");
+    navigate("/PurchaseSuccessful");
   };
 
   // FUNCTIONS WHEN A USER IS LOGGED IN
   const deleteCartItem = async (currentProduct) => {
-    const response = await fetch("http://localhost:3001/api/order/deleteItem", {
+    const response = await fetch(`/api/order/deleteItem`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -60,20 +55,17 @@ const Cart = ({
 
   const decreaseQuantity = async (currentProduct) => {
     if (currentProduct.quantity > 1) {
-      const response = await fetch(
-        "http://localhost:3001/api/order/decreaseCartItem",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            orderId: user.cart.id,
-            productId: currentProduct.id,
-          }),
-        }
-      );
+      const response = await fetch(`/api/order/decreaseCartItem`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          orderId: user.cart.id,
+          productId: currentProduct.id,
+        }),
+      });
       const data = await response.json();
       await fetchUser();
       console.log(data);
@@ -83,7 +75,7 @@ const Cart = ({
   };
 
   const getOrderPrice = async (orderId) => {
-    const response = await fetch("http://localhost:3001/api/order/orderPrice", {
+    const response = await fetch(`/api/order/orderPrice`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -127,6 +119,7 @@ const Cart = ({
     const exist = cartItems.find(
       (cartItem) => cartItem.id === currentProduct.id
     );
+
     setCartItems(
       cartItems.filter((cartItem) => cartItem.id !== currentProduct.id)
     );
@@ -203,52 +196,51 @@ const Cart = ({
       );
     }
   }
-  //WHEN NO USER LOGGED IN
-  else {
-    if (!cartItems.length) {
+  // WHEN USER IS NOT LOGGED IN
+  if (!user) {
+    if (cartItems.length === 0) {
       return <h1>YOUR CART IS EMPTY</h1>;
     } else {
       return (
         <>
-          <div></div>
-          {cartItems.map((item) => {
-            return (
-              <>
-                <div className="single-product-container" key={item.id}>
-                  <h1>{item.title}</h1>
-                  <h4>{item.displayPrice}$</h4>
-                  <h4>x {item.qty}</h4>
-
+          <div>
+            {cartItems.map((product) => {
+              return (
+                <div className="single-product-container" key={product.id}>
+                  <h1>{product.title}</h1>
+                  <h4>
+                    {product.price} for {product.qty}
+                  </h4>
                   <div className="img-buttons">
-                    <img src={item.imgurl} width="200"></img>
+                    <img src={product.imgurl} width="200"></img>
                     <button
                       className="button2"
-                      onClick={() => addItemToCart(item)}
+                      onClick={() => addItemToCart(product)}
                     >
                       +
                     </button>
                     <button
                       className="button2"
-                      onClick={() => decreaseCartItemQuantity(item)}
+                      onClick={() => decreaseCartItemQuantity(product)}
                     >
                       -
                     </button>
                     <button
                       className="button2"
-                      onClick={() => removeCartItem(item)}
+                      onClick={() => removeCartItem(product)}
                     >
                       Remove from cart
                     </button>
                   </div>
+                  <br></br>
                 </div>
-              </>
-            );
-          })}
+              );
+            })}
+          </div>
           <div className="checkout-container">
-            <h3>total: {total}$ </h3>
-
-            <button className="button2" onClick={() => visitorCheckout()}>
-              Purchase
+            <h3>Total: {total}$ </h3>
+            <button className="button2" onClick={visitorCheckout}>
+              Proceed to Checkout
             </button>
           </div>
         </>

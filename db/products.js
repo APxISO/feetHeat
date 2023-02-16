@@ -3,7 +3,7 @@ const client = require("./index");
 const getProducts = async () => {
   const response = await client.query(`
     SELECT * FROM products;
-    `);
+  `);
   return response.rows;
 };
 
@@ -26,9 +26,8 @@ const getProductById = async ({ productId }) => {
   try {
     const response = await client.query(
       `
-    SELECT * FROM products
-    WHERE id = $1
-    ;
+      SELECT * FROM products
+      WHERE id = $1;
     `,
       [productId]
     );
@@ -39,18 +38,34 @@ const getProductById = async ({ productId }) => {
 };
 
 const createProduct = async ({ title, description, imgurl, stock, price }) => {
+  if (!title || typeof title !== "string") {
+    throw new Error("title is required and must be a string");
+  }
+  if (!description || typeof description !== "string") {
+    throw new Error("description is required and must be a string");
+  }
+  if (!imgurl || typeof imgurl !== "string") {
+    throw new Error("imgurl is required and must be a string");
+  }
+  if (typeof stock !== "number") {
+    throw new Error("stock is required and must be a number");
+  }
+  if (typeof price !== "number") {
+    throw new Error("price is required and must be a number");
+  }
+
   try {
     const {
-      rows: [products],
+      rows: [product],
     } = await client.query(
       `
-    INSERT INTO products(title, description,imgurl, stock, price)
-    VALUES ($1, $2, $3, $4,$5)
-    RETURNING *;
+      INSERT INTO products (title, description, imgurl, stock, price)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
     `,
       [title, description, imgurl, stock, price]
     );
-    return products;
+    return product;
   } catch (error) {
     throw error;
   }
@@ -64,56 +79,60 @@ const updateProduct = async ({
   stock,
   price,
 }) => {
+  if (typeof id !== "number") {
+    throw new Error("id is required and must be a number");
+  }
+
   try {
-    if (id != undefined) {
-      if (title) {
-        await client.query(
-          `
-          UPDATE products
-          SET "title" = $1
-          WHERE id = $2;
-        `,
-          [title, id]
-        );
-      }
-      if (description) {
-        await client.query(
-          `
-          UPDATE products
-          SET description = $1
-          WHERE id = $2;
-        `,
-          [description, id]
-        );
-      }
-      if (stock) {
-        await client.query(
-          `
-          UPDATE products
-          SET stock = $1
-          WHERE id = $2;
-        `,
-          [stock, id]
-        );
-      }
-      if (price) {
-        await client.query(
-          `
+    if (title) {
+      await client.query(
+        `
+        UPDATE products
+        SET "title" = $1
+        WHERE id = $2;
+      `,
+        [title, id]
+      );
+    }
+    if (description) {
+      await client.query(
+        `
+        UPDATE products
+        SET description = $1
+        WHERE id = $2;
+      `,
+        [description, id]
+      );
+    }
+    if (stock) {
+      await client.query(
+        `
+        UPDATE products
+        SET stock = $1
+        WHERE id = $2;
+      `,
+        [stock, id]
+      );
+    }
+    if (price) {
+      await client.query(
+        `
         UPDATE products
         SET price = $1 
-        WHERE id = $2
-        `,
-          [price, id]
-        );
-      }
-      if (imgurl) {
-        await client.query(
-          `UPDATE products
-         SET imgurl = $1
-          WHERE id = $2`,
-          [imgurl, id]
-        );
-      }
+        WHERE id = $2;
+      `,
+        [price, id]
+      );
+    }
+    if (imgurl) {
+      await client.query(
+        `
+        UPDATE products
+        SET imgurl = $1
+        WHERE id = $2;
+      `,
+        [imgurl, id]
+      );
     }
 
     const response = await client.query(
@@ -125,8 +144,8 @@ const updateProduct = async ({
     );
 
     return response;
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    throw error;
   }
 };
 

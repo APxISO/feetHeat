@@ -1,6 +1,4 @@
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
@@ -18,14 +16,14 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [error, setError] = useState("");
 
   const fetchProducts = async () => {
-    const response = await fetch("http://localhost:3001/api/products");
+    const response = await fetch(`/api/products`);
     const info = await response.json();
     setProducts(info);
   };
@@ -36,7 +34,7 @@ const App = () => {
     if (lsToken) {
       setToken(lsToken);
     }
-    const response = await fetch("http://localhost:3001/api/user/me", {
+    const response = await fetch(`/api/user/me`, {
       headers: {
         Authorization: `Bearer ${lsToken}`,
       },
@@ -50,60 +48,57 @@ const App = () => {
   };
 
   const addItemToCart = async (currentProduct) => {
-    //IF A USER IS LOGGED IN
     console.log(user, "Item added!");
     if (user) {
-      for (let i = 0; i < user.cart.products.length; i++) {
-        if (user.cart.products.length) {
-          if (currentProduct.id === user.cart.products[i].id) {
-            const response = await fetch(
-              "http://localhost:3001/api/order/updateCartItem",
-              {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  orderId: user.cart.id,
-                  productId: currentProduct.id,
-                }),
-              }
-            );
-
-            await fetchUser();
-            return;
-          }
-        }
-      }
-
-      const response = await fetch("http://localhost:3001/api/order/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          orderId: user.cart.id,
-          productId: currentProduct.id,
-          price: currentProduct.price,
-          quantity: 1,
-        }),
-      });
-      const data = await response.json();
-      await fetchUser();
-    } else {
-      //NO USER LOGGED
-      const exist = products.find(
+      const productInCart = user.cart.products.find(
         (product) => product.id === currentProduct.id
       );
 
-      if (cartItems.find((cartItem) => cartItem.id === exist.id)) {
+      if (productInCart) {
+        const response = await fetch(`/api/order/updateCartItem`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            orderId: user.cart.id,
+            productId: currentProduct.id,
+          }),
+        });
+
+        await fetchUser();
+        return;
+      } else {
+        const response = await fetch(`/api/order/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            orderId: user.cart.id,
+            productId: currentProduct.id,
+            price: currentProduct.price,
+            quantity: 1,
+          }),
+        });
+
+        await fetchUser();
+        return;
+      }
+    } else {
+      const productInCart = cartItems.find(
+        (item) => item.id === currentProduct.id
+      );
+
+      if (productInCart) {
         const itemToAdd = cartItems.map((cartItem) => {
-          const tempItem = { ...exist, qty: cartItem.qty + 1 };
+          const tempItem = { ...productInCart, qty: cartItem.qty + 1 };
           tempItem.displayPrice = tempItem.price * tempItem.qty;
           return cartItem.id === currentProduct.id ? tempItem : cartItem;
         });
+
         setCartItems(itemToAdd);
       } else {
         setCartItems([
@@ -130,8 +125,8 @@ const App = () => {
           <Route
             element={
               <Login
-                email={email}
-                setEmail={setEmail}
+                username={username}
+                setUsername={setUsername}
                 password={password}
                 setPassword={setPassword}
                 user={user}
@@ -147,8 +142,8 @@ const App = () => {
           <Route
             element={
               <Register
-                setEmail={setEmail}
-                email={email}
+                setUsername={setUsername}
+                username={username}
                 password={password}
                 setPassword={setPassword}
                 setConfirm={setConfirm}
