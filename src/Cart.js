@@ -18,7 +18,7 @@ const Cart = ({
   };
 
   const handleCheckOut = async (orderId, creatorId) => {
-    const response = await fetch(`/api/order/checkoutOrder`, {
+    const response = await fetch(`/api/orders/checkoutOrder`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +75,7 @@ const Cart = ({
   };
 
   const getOrderPrice = async (orderId) => {
-    const response = await fetch(`/api/order/orderPrice`, {
+    const response = await fetch(`/api/orders/orderPrice`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

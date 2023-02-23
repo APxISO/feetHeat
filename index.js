@@ -26,6 +26,7 @@ app.use(async (req, res, next) => {
     try {
       const auth = req.headers.authorization.split(" ")[1];
       const _user = await JWT.decode(auth, process.env.JWT_SECRET);
+      console.log(_user);
       if (!_user) {
         return next();
       }
@@ -33,6 +34,7 @@ app.use(async (req, res, next) => {
       req.user = user;
       req.user.cart = await getCartByUserId(user.id);
       req.user.cart.products = await getAllProductsByOrderId(req.user.cart.id);
+      console.log(req.user.cart.id);
       next();
     } catch (error) {
       if (error.name === "JsonWebTokenError") {

@@ -34,14 +34,14 @@ const App = () => {
     if (lsToken) {
       setToken(lsToken);
     }
-    const response = await fetch(`/api/user/me`, {
+    const response = await fetch(`/api/users/me`, {
       headers: {
         Authorization: `Bearer ${lsToken}`,
       },
     });
 
     const data = await response.json();
-
+    console.log(data);
     if (!data.error) {
       setUser(data);
     }
@@ -49,63 +49,81 @@ const App = () => {
 
   const addItemToCart = async (currentProduct) => {
     console.log(user, "Item added!");
-    if (user) {
-      const productInCart = user.cart.products.find(
-        (product) => product.id === currentProduct.id
-      );
 
-      if (productInCart) {
-        const response = await fetch(`/api/order/updateCartItem`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            orderId: user.cart.id,
-            productId: currentProduct.id,
-          }),
-        });
+    if (!user) {
+      setCartItems((prevItems) => {
+        const productInCart = prevItems.find(
+          (item) => item.id === currentProduct.id
+        );
+        if (productInCart) {
+          // If the item is already in the cart, update its quantity
+          return prevItems.map((item) => {
+            if (item.id === currentProduct.id) {
+              return { ...item, qty: item.qty + 1 };
+            } else {
+              return item;
+            }
+          });
+        } else {
+          // If the item is not in the cart, add it with a quantity of 1
+          return [
+            ...prevItems,
+            {
+              ...currentProduct,
+              qty: 1,
+              displayPrice: currentProduct.price,
+            },
+          ];
+        }
+      });
+      return;
+    }
 
-        await fetchUser();
-        return;
-      } else {
-        const response = await fetch(`/api/order/cart`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            orderId: user.cart.id,
-            productId: currentProduct.id,
-            price: currentProduct.price,
-            quantity: 1,
-          }),
-        });
-
-        await fetchUser();
+    // Make sure the user.cart object is defined before accessing its properties
+    if (!user.cart) {
+      await fetchUser();
+      if (!user.cart) {
+        console.error("User cart not initialized.");
         return;
       }
+    }
+
+    const productInCart = user.cart.products.find(
+      (product) => product.id === currentProduct.id
+    );
+
+    if (productInCart) {
+      const response = await fetch(`/api/orders/updateCartItem`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          orderId: user.cart.id,
+          productId: currentProduct.id,
+        }),
+      });
+
+      await fetchUser();
+      return;
     } else {
-      const productInCart = cartItems.find(
-        (item) => item.id === currentProduct.id
-      );
+      const response = await fetch(`/api/orders/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          orderId: user.cart.id,
+          productId: currentProduct.id,
+          price: currentProduct.price,
+          quantity: 1,
+        }),
+      });
 
-      if (productInCart) {
-        const itemToAdd = cartItems.map((cartItem) => {
-          const tempItem = { ...productInCart, qty: cartItem.qty + 1 };
-          tempItem.displayPrice = tempItem.price * tempItem.qty;
-          return cartItem.id === currentProduct.id ? tempItem : cartItem;
-        });
-
-        setCartItems(itemToAdd);
-      } else {
-        setCartItems([
-          ...cartItems,
-          { ...currentProduct, qty: 1, displayPrice: currentProduct.price },
-        ]);
-      }
+      await fetchUser();
+      return;
     }
   };
 
