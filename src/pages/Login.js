@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({ setToken }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -36,6 +38,10 @@ const Login = ({ setToken }) => {
         return;
       }
 
+      setToken(token);
+
+      localStorage.setItem("token", token);
+      setIsLoggedIn(true);
       alert("Welcome back " + `${username}` + "!");
       navigate("/Products");
 

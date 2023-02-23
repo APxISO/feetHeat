@@ -37,7 +37,7 @@ const Cart = ({
 
   // FUNCTIONS WHEN A USER IS LOGGED IN
   const deleteCartItem = async (currentProduct) => {
-    const response = await fetch(`/api/order/deleteItem`, {
+    const response = await fetch(`/api/orders/deleteItem`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const Cart = ({
 
   const decreaseQuantity = async (currentProduct) => {
     if (currentProduct.quantity > 1) {
-      const response = await fetch(`/api/order/decreaseCartItem`, {
+      const response = await fetch(`/api/orders/decreaseCartItem`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const Cart = ({
                 <div className="single-product-container" key={product.id}>
                   <h1>{product.title}</h1>
                   <h4>
-                    {product.price} for {product.quantity}
+                    ${product.price} for {product.quantity}
                   </h4>
                   <div className="img-buttons">
                     <img src={product.imgurl} width="200"></img>
@@ -209,7 +209,7 @@ const Cart = ({
                 <div className="single-product-container" key={product.id}>
                   <h1>{product.title}</h1>
                   <h4>
-                    {product.price} for {product.qty}
+                    ${product.price} for {product.qty}
                   </h4>
                   <div className="img-buttons">
                     <img src={product.imgurl} width="200"></img>
