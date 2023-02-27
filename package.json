@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js && node db/seed",
+    "start": "node db/seed && node index.js ",
     "react": "react-scripts start",
     "build": "react-scripts build",
     "seed": "node db/seed"
