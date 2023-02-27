@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js && nodemon db/seed",
+    "start": "node index.js && node db/seed",
     "react": "react-scripts start",
     "build": "react-scripts build",
     "seed": "node db/seed"
