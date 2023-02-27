@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import logo from "./logo.PNG";
 
 const Navbar = ({ user, setToken, setUser, token }) => {
+  const isLoggedIn = !!user && !!token;
+
   return (
     <div className="navbar">
       <div className="navcont">
@@ -18,18 +20,23 @@ const Navbar = ({ user, setToken, setUser, token }) => {
             <Link to="/Products" className="menuItem">
               ALL SHOES
             </Link>
-            {user ? (
-              <Link
-                to="/"
-                onClick={() => {
-                  setToken("");
-                  setUser(null);
-                  localStorage.removeItem("token");
-                }}
-                className="menuItem"
-              >
-                LOGOUT
-              </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to="/"
+                  onClick={() => {
+                    setToken("");
+                    setUser(null);
+                    localStorage.removeItem("token");
+                  }}
+                  className="menuItem"
+                >
+                  LOGOUT
+                </Link>
+                <Link to="/Cart" className="menuItem">
+                  <ShoppingCartOutlined />
+                </Link>
+              </>
             ) : (
               <>
                 <Link to="/Login" className="menuItem">
@@ -38,19 +45,16 @@ const Navbar = ({ user, setToken, setUser, token }) => {
                 <Link to="/Register" className="menuItem">
                   REGISTER
                 </Link>
+                <Link to="/Cart" className="menuItem">
+                  <ShoppingCartOutlined />
+                </Link>
               </>
             )}
-            {user ? (
-              user.isAdmin === true ? (
-                <Link to="/admin" className="menuItem">
-                  ADMIN
-                </Link>
-              ) : null
+            {isLoggedIn && user.isAdmin === true ? (
+              <Link to="/admin" className="menuItem">
+                ADMIN
+              </Link>
             ) : null}
-
-            <Link to="/Cart" className="menuItem">
-              <ShoppingCartOutlined />
-            </Link>
           </div>
         </div>
       </div>
