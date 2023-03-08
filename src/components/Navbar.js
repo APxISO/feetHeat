@@ -1,10 +1,14 @@
-import { SearchOutlined, ShoppingCartOutlined } from "@material-ui/icons";
-import React from "react";
+import { ShoppingCartOutlined } from "@material-ui/icons";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "./logo.PNG";
 
 const Navbar = ({ user, setToken, setUser, token }) => {
-  const isLoggedIn = !!user && !!token;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!user && !!token);
+  }, [user, token]);
 
   return (
     <div className="navbar">
@@ -50,7 +54,7 @@ const Navbar = ({ user, setToken, setUser, token }) => {
                 </Link>
               </>
             )}
-            {isLoggedIn && user.isAdmin === true ? (
+            {isLoggedIn && user?.isAdmin === true ? (
               <Link to="/admin" className="menuItem">
                 ADMIN
               </Link>

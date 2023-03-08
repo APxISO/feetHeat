@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const Register = () => {
+const Register = ({ fetchUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -48,6 +48,7 @@ const Register = () => {
 
       localStorage.setItem("token", token);
       setIsLoggedIn(true);
+      await fetchUser();
       alert("Registration successful!");
       navigate("/Products");
 

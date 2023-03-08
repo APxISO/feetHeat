@@ -41,7 +41,7 @@ const Login = () => {
       setToken(token);
 
       localStorage.setItem("token", token);
-
+      await fetchUser();
       alert("Welcome back " + `${username}` + "!");
       setIsLoggedIn(true);
       navigate("/Products");

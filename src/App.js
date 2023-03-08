@@ -168,6 +168,7 @@ const App = () => {
                 confirm={confirm}
                 setToken={setToken}
                 setError={setError}
+                fetchUser={fetchUser}
               />
             }
             path="/Register"
