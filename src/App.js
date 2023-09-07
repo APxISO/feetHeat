@@ -152,6 +152,7 @@ const App = () => {
                 setToken={setToken}
                 error={error}
                 setError={setError}
+                fetchUser={fetchUser}
               />
             }
             path="/Login"
